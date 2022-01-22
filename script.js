@@ -1,3 +1,6 @@
+let contrastSteps = 3;
+let hueFamilies = 3;
+
 let hue; 
 let startHue = 200;
 let endHue = 210;
@@ -7,11 +10,36 @@ let contrast;
 let lightness = 0;
 let color;
 
-function makeColor() {
-  hue = parseFloat(document.getElementById('hue').value);
+let contrasts = [];
+let hues = [];
+let colorHSCs = [];
+
+
+function updateColors() {
   saturation100 = parseFloat(document.getElementById('saturation').value);
   saturation = saturation100 / 100;
-  contrast = parseFloat(document.getElementById('contrast').value);
+
+  let contrastValues = document.getElementsByName("contrast");
+  for (step = 0; step < contrastValues.length; step++) {
+    contrasts[step] = contrastValues[step].value;
+  }
+  let hueValues = document.getElementsByName("hue");
+  for (step = 0; step < hueValues.length; step++) {
+    hues[step] = hueValues[step].value;
+  }
+  for (step = 0; step < hues.length; step++) {
+    colorHSCs[step] = Array(hues[step], saturation100 / 100, contrasts[step]);
+  }
+  console.log(contrasts, hues, colorHSCs);
+
+}
+
+function makeColor() {
+
+  hue = parseFloat(document.getElementById('hue1').value);
+  saturation100 = parseFloat(document.getElementById('saturation').value);
+  saturation = saturation100 / 100;
+  contrast = parseFloat(document.getElementById('contrast1').value);
   for (let lightness100 = 0; lightness100 < 101; lightness100++) {
     //runs on every value of lightness from 0 to 100
     let testLightness = lightness100 / 100;
@@ -40,7 +68,7 @@ function makeColor() {
   color = chroma({ h: hue, s: saturation, l: lightness });
   console.log(chroma.contrast(color, 'white'));
 
-  document.getElementById("swatch").style.backgroundColor =
+  document.getElementById("swatch1").style.backgroundColor =
     color;
 }
 
