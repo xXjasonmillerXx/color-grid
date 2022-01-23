@@ -28,6 +28,7 @@ let color;
 let contrasts = [];
 let hues = [];
 
+
 function addHueFamily() {
   hueFamilies++;
 
@@ -81,7 +82,7 @@ function addContrastStep() {
 
   let newContrastCell = document.createElement("div");
   let newContrastCellLabel = document.createElement("label");
-  let newContrastCellLabelText = document.createTextNode("Contrast to white:");
+  let newContrastCellLabelText = document.createTextNode("Target contrast:");
   let newContrastCellInput = document.createElement("input");
   //create contrastCell div, label, and input
 
@@ -117,7 +118,6 @@ function addContrastStep() {
   updateColors(); //this generates a weird error i can't fix, but seems to work fine regardless for some reason
 }
 
-
 function updateColors() {
   saturation100 = parseFloat(document.getElementById('saturation').value);
 
@@ -135,11 +135,28 @@ function updateColors() {
       //let swatch = "swatch" + ((row * 3) + cell + 1);
       let swatch = "swatchR" + row + "C" + cell;
       document.getElementById(swatch).style.backgroundColor = color;
-      console.log(contrasts.length, hues.length, row, cell, swatch);
 
+      let actualContrast = Math.round(chroma.contrast(color, "white") * 100)/100; 
+      let swatchContrast = "contrastR" + row + "C" + cell; 
+      document.getElementById(swatchContrast).innerHTML = "Contrast: " + actualContrast;
+      //get actual contrast of color and display it inside the swatch
+
+      if (actualContrast < 3) {
+        document.getElementById("nameR" + row + "C" + cell).style.color = "black";
+        document.getElementById("satR" + row + "C" + cell).style.color = "black";
+        document.getElementById(swatchContrast).style.color = "black";
+      } else {
+        document.getElementById("nameR" + row + "C" + cell).style.color = "white";
+        document.getElementById("satR" + row + "C" + cell).style.color = "white";
+        document.getElementById(swatchContrast).style.color = "white";
+      }
+
+      console.log(contrasts.length, hues.length, row, cell, swatch, actualContrast, swatchContrast);
     }
   }
 }
+
+
 
 function getContrast(hue, sat100, contrast) {
 
