@@ -28,6 +28,12 @@ let contrasts = [];
 let hues = [];
 
 function addContrastStep() {
+  contrastSteps++;
+  gridCols = contrastSteps + 2;
+  document.getElementById("grid").style.gridTemplateColumns = "repeat(" + gridCols + ", 1fr)";
+  //console.log(gridCols, contrastSteps);
+  //restyle grid to have 1 additional column
+
   let newContrastCell = document.createElement("div");
   let newContrastCellLabel = document.createElement("label");
   let newContrastCellLabelText = document.createTextNode("Contrast to white:");
@@ -36,7 +42,7 @@ function addContrastStep() {
 
   newContrastCellInput.type = "number";
   newContrastCellInput.name = "contrast";
-  newContrastCellInput.value = "1";
+  newContrastCellInput.value = "2";
   newContrastCellInput.onchange = "updateColors()";
   newContrastCellInput.min = "1";
   newContrastCellInput.max = "21";
@@ -47,21 +53,23 @@ function addContrastStep() {
   newContrastCellLabel.appendChild(newContrastCellLabelText); //put label text inside label
   newContrastCell.appendChild(newContrastCellInput); //put input inside div
 
-  let newSwatch = document.createElement("div");
-  newSwatch.id = "";
-  newSwatch.class = "swatch";
-      <div id="swatch1" class="swatch"></div>
-
-
-  let hueCells = document.getElementsByClassName("hueCell");
   let addContrast = document.getElementById("addContrast");
   document.getElementById("grid").insertBefore(newContrastCell, addContrast);
-  console.log(gridCols, contrastSteps);
+  //put contrastCell before the existing Add Contrast Step button
+  //console.log(gridCols, contrastSteps);
 
-  gridCols++;
-  ///document.getElementById("grid").style.grid-template-columns = "repeat("+ gridCols +", 1fr)";
-  document.getElementById("grid").style.gridTemplateColumns = "repeat(" + gridCols + ", 1fr)";
-  console.log(gridCols, contrastSteps);
+  let newSwatch = document.createElement("div");
+  newSwatch.id = "swatchR0C" + (contrastSteps-1);
+  newSwatch.className = "swatch";
+  newSwatch.style.backgroundColor = "white";
+  let rowEndSwatch = document.getElementById("swatchR0End");
+  document.getElementById("grid").insertBefore(newSwatch, rowEndSwatch);
+  //similar to above, create swatch div and add to end of row
+  console.log(swatchR0C3.style, swatchR0C3.className);
+
+  updateColors(); //this generates a weird error i can't fix, but seems to work fine regardless for some reason
+
+//for however many rows there are, add a swatch with id "row + # of gridcols"
 }
 
 
@@ -79,7 +87,8 @@ function updateColors() {
   for (row = 0; row < hues.length; row++) {
     for (cell = 0; cell < contrasts.length; cell++) {
       let color = getContrast(hues[row], saturation100, contrasts[cell]);
-      let swatch = "swatch" + ((row * 3) + cell + 1);
+      //let swatch = "swatch" + ((row * 3) + cell + 1);
+      let swatch = "swatchR" + row + "C" + cell;
       document.getElementById(swatch).style.backgroundColor = color;
       console.log(row, cell, swatch);
 
