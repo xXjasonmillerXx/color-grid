@@ -14,6 +14,7 @@
 let contrastSteps = 3;
 let gridCols = contrastSteps + 2;
 let hueFamilies = 3;
+//let gridRows = hueFamilies + 2;
 
 let hue;
 let startHue = 200;
@@ -26,6 +27,50 @@ let color;
 
 let contrasts = [];
 let hues = [];
+
+function addHueFamily() {
+  hueFamilies++;
+
+  let newHueCell = document.createElement("div");
+  let newHueCellLabel = document.createElement("label");
+  let newHueCellLabelText = document.createTextNode("Hue:");
+  let newHueCellInput = document.createElement("input");
+  //create hueCell div, label, and input
+
+  newHueCellInput.type = "number";
+  newHueCellInput.name = "hue";
+  newHueCellInput.value = "0";
+  newHueCellInput.addEventListener("change", updateColors);
+  newHueCellInput.min = "0";
+  newHueCellInput.max = "360";
+  //add attributes to hueCell input
+
+  newHueCell.appendChild(newHueCellLabel); //put label inside div
+  newHueCellLabel.appendChild(newHueCellLabelText); //put label text inside label
+  newHueCell.appendChild(newHueCellInput); //put input inside div
+
+  let addHue = document.getElementById("addHue");
+  document.getElementById("grid").insertBefore(newHueCell, addHue);
+  //put hueCell before the existing Add Hue Family button
+  //console.log(gridCols, contrastSteps);
+
+  for (let col = 0; col < contrasts.length; col++) {
+    let newSwatch = document.createElement("div");
+    newSwatch.id = "swatchR" + (hueFamilies-1) + "C" + col;
+    newSwatch.className = "swatch";
+    newSwatch.style.backgroundColor = "white";
+    document.getElementById("grid").insertBefore(newSwatch, addHue);
+    //similar to above, create swatch divs and add to new row, for each col
+    //console.log(row, contrastSteps, newSwatch.id, newSwatch.className, newSwatch.style.backgroundColor, rowEndSwatch.id);
+  }
+
+  let newEndCell = document.createElement("div");
+  newEndCell.id = "swatchR" + (hueFamilies-1) + "End";
+  newEndCell.className = "swatch";
+  document.getElementById("grid").insertBefore(newEndCell, addHue);
+
+  updateColors();   
+}
 
 function addContrastStep() {
   contrastSteps++;
@@ -43,7 +88,7 @@ function addContrastStep() {
   newContrastCellInput.type = "number";
   newContrastCellInput.name = "contrast";
   newContrastCellInput.value = "2";
-  newContrastCellInput.onchange = "updateColors()";
+  newContrastCellInput.addEventListener("change", updateColors);
   newContrastCellInput.min = "1";
   newContrastCellInput.max = "21";
   newContrastCellInput.step = "0.1";
@@ -58,18 +103,18 @@ function addContrastStep() {
   //put contrastCell before the existing Add Contrast Step button
   //console.log(gridCols, contrastSteps);
 
-  let newSwatch = document.createElement("div");
-  newSwatch.id = "swatchR0C" + (contrastSteps-1);
-  newSwatch.className = "swatch";
-  newSwatch.style.backgroundColor = "white";
-  let rowEndSwatch = document.getElementById("swatchR0End");
-  document.getElementById("grid").insertBefore(newSwatch, rowEndSwatch);
-  //similar to above, create swatch div and add to end of row
-  console.log(swatchR0C3.style, swatchR0C3.className);
+  for (let row = 0; row < hues.length; row++) {
+    let newSwatch = document.createElement("div");
+    newSwatch.id = "swatchR" + row + "C" + (contrastSteps-1);
+    newSwatch.className = "swatch";
+    newSwatch.style.backgroundColor = "white";
+    let rowEndSwatch = document.getElementById("swatchR" + row + "End");
+    document.getElementById("grid").insertBefore(newSwatch, rowEndSwatch);
+    //similar to above, create swatch div and add to end of row, for each row
+    //console.log(row, contrastSteps, newSwatch.id, newSwatch.className, newSwatch.style.backgroundColor, rowEndSwatch.id);
+  }
 
   updateColors(); //this generates a weird error i can't fix, but seems to work fine regardless for some reason
-
-//for however many rows there are, add a swatch with id "row + # of gridcols"
 }
 
 
@@ -77,20 +122,20 @@ function updateColors() {
   saturation100 = parseFloat(document.getElementById('saturation').value);
 
   let contrastValues = document.getElementsByName("contrast");
-  for (step = 0; step < contrastValues.length; step++) {
+  for (let step = 0; step < contrastValues.length; step++) {
     contrasts[step] = contrastValues[step].value;
   }
   let hueValues = document.getElementsByName("hue");
-  for (step = 0; step < hueValues.length; step++) {
+  for (let step = 0; step < hueValues.length; step++) {
     hues[step] = hueValues[step].value;
   }
-  for (row = 0; row < hues.length; row++) {
-    for (cell = 0; cell < contrasts.length; cell++) {
+  for (let row = 0; row < hues.length; row++) {
+    for (let cell = 0; cell < contrasts.length; cell++) {
       let color = getContrast(hues[row], saturation100, contrasts[cell]);
       //let swatch = "swatch" + ((row * 3) + cell + 1);
       let swatch = "swatchR" + row + "C" + cell;
       document.getElementById(swatch).style.backgroundColor = color;
-      console.log(row, cell, swatch);
+      console.log(contrasts.length, hues.length, row, cell, swatch);
 
     }
   }
