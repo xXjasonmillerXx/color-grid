@@ -1,17 +1,22 @@
 .swatch {
   //width: 200px;
   //height: 120px;
-  background-color: rgb(255, 255, 255);
-  border-radius: 4px;
+  //background-color: rgb(255, 255, 255);
+  border-radius: 2px;
 }
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(5, 1fr);
   gap: 4px;
-  grid-auto-rows: minmax(100px, auto);
+  grid-auto-rows: minmax(80px, auto);
+
 }
 
 .hueCell {
-  display: block;
+  //display: block;
+}
+
+.contrastCell {
+  
 }
