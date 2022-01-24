@@ -49,7 +49,6 @@ body {
 }
 
 
-
 p {
   margin: 0px;
 }
@@ -59,10 +58,8 @@ p {
   opacity: 80%;
 }
 
-.hueCell {
-  //display: block;
-}
-
-.contrastCell {
-  
+.nameInput {
+  width: auto;
+  minwidth: 80px;
+  maxwidth: 160px;
 }

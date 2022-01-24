@@ -1,7 +1,4 @@
 //TODO
-//add arbitrary control of grid dimensions
-//add info inside swatches
-//add naming of steps/families
 //add end hue and easing
 //add offsets
 //come up with saturation solution
@@ -28,6 +25,9 @@ let color;
 let contrasts = [];
 let hues = [];
 
+let stepNames = [];
+let hueNames = [];
+
 
 //updateUI should contain functions like update contrast settings, update hue settings, update swatches
 function initializeUI() {
@@ -38,6 +38,13 @@ function initializeUI() {
   document.getElementById("fam0").value = 350;
   document.getElementById("fam1").value = 160;
   document.getElementById("fam2").value = 220;
+  document.getElementById("nameS0").value = 1;
+  document.getElementById("nameS1").value = 2;
+  document.getElementById("nameS2").value = 3;
+  document.getElementById("nameF0").value = "red";
+  document.getElementById("nameF1").value = "green";
+  document.getElementById("nameF2").value = "blue";
+  console.log(nameS0.value);
   updateUI();
   //updateSwatches();
 }
@@ -51,6 +58,7 @@ function updateUI() {
 function addContrastStep() {
   contrastSteps++;
   contrasts.push(2);
+  stepNames.push("-");
   updateContrastSettings();
   updateSwatches();
 }
@@ -75,7 +83,7 @@ function addHueFamily() {
 function delHueStep(event) {
   if (hueFamilies > 1) {
     let hueSetting = this.parentNode.id;
-    console.log(hueSetting);
+    //console.log(hueSetting);
     document.getElementById(hueSetting).remove();
     hueFamilies--;
     updateHueSettings();
@@ -85,10 +93,15 @@ function delHueStep(event) {
 
 function updateContrastSettings() {
   let contrastValues = document.getElementsByName("contrast");
-  for (let step = 0; step < contrastValues.length; step++) {
-    contrasts[step] = contrastValues[step].value;
+  for (let i = 0; i < contrastValues.length; i++) {
+    contrasts[i] = contrastValues[i].value;
   } //update contrasts array with current contrast values
   //console.log(contrasts);
+
+  let stepNameValues = document.getElementsByClassName("stepName");
+  for (let i = 0; i < stepNameValues.length; i++) {
+    stepNames[i] = stepNameValues[i].value;
+  } //update stepnames array with current stepname values
 
   let contrastSettings = document.getElementById("contrastSettings");
   while (contrastSettings.firstChild) {
@@ -102,8 +115,11 @@ function updateContrastSettings() {
 
     let id = "step" + step;
     document.getElementById(id).value = contrasts[step];
-    console.log(id, contrastValues[step].value);
+    //console.log(id, contrastValues[step].value);
     //add back previous contrast values
+
+    let nameID = "nameS" + step;
+    document.getElementById(nameID).value = stepNames[step];
   }
 }
 
@@ -113,6 +129,11 @@ function updateHueSettings() {
     hues[i] = hueValues[i].value;
   } //update hues array with current hue values
   //console.log(hues);
+
+  let hueNameValues = document.getElementsByClassName("hueName");
+  for (let i = 0; i < hueNameValues.length; i++) {
+    hueNames[i] = hueNameValues[i].value;
+  } //update huenames array with current huename values
 
   let hueSettings = document.getElementById("hueSettings");
   while (hueSettings.firstChild) {
@@ -128,6 +149,9 @@ function updateHueSettings() {
     document.getElementById(id).value = hues[fam];
     //console.log(id, hueValues[fam].value);
     //add back previous contrast values
+
+    let nameID = "nameF" + fam;
+    document.getElementById(nameID).value = hueNames[fam];
   }
 }
 
@@ -146,6 +170,9 @@ function updateSwatches() {
 
 function createContrastSetting(step) {
   let contrastSetting = document.createElement("div");
+  let contrastNameLabel = document.createElement("label");
+  let contrastNameLabelText = document.createTextNode("Step name: ");
+  let contrastNameInput = document.createElement("input");
   let contrastSettingLabel = document.createElement("label");
   let contrastSettingLabelText = document.createTextNode("Target contrast: ");
   let contrastSettingInput = document.createElement("input");
@@ -154,6 +181,10 @@ function createContrastSetting(step) {
   //create contrastSetting contents
 
   contrastSetting.id = "contrastSetting" + step;
+  contrastNameInput.id = "nameS" + step;
+  contrastNameInput.className = "nameInput stepName";
+  contrastNameInput.addEventListener("change", updateSwatches);
+  contrastNameInput.addEventListener("click", contrastNameInput.select);
   contrastSettingInput.id = "step" + step;
   contrastSetting.className = "contrastSetting";
   contrastSettingInput.type = "number";
@@ -168,6 +199,9 @@ function createContrastSetting(step) {
   //add attributes to contents
 
   document.getElementById("contrastSettings").appendChild(contrastSetting);
+  contrastSetting.appendChild(contrastNameLabel);
+  contrastNameLabel.appendChild(contrastNameLabelText);
+  contrastSetting.appendChild(contrastNameInput);
   contrastSetting.appendChild(contrastSettingLabel);
   contrastSettingLabel.appendChild(contrastSettingLabelText);
   contrastSetting.appendChild(contrastSettingInput);
@@ -178,6 +212,9 @@ function createContrastSetting(step) {
 
 function createHueSetting(fam) {
   let hueSetting = document.createElement("div");
+  let hueNameLabel = document.createElement("label");
+  let hueNameLabelText = document.createTextNode("Hue name: ");
+  let hueNameInput = document.createElement("input");
   let hueSettingLabel = document.createElement("label");
   let hueSettingLabelText = document.createTextNode("Hue: ");
   let hueSettingInput = document.createElement("input");
@@ -186,6 +223,10 @@ function createHueSetting(fam) {
   //create hueSetting contents
 
   hueSetting.id = "hueSetting" + fam;
+  hueNameInput.id = "nameF" + fam;
+  hueNameInput.className = "nameInput hueName";
+  hueNameInput.addEventListener("change", updateSwatches);
+  hueNameInput.addEventListener("click", hueNameInput.select);
   hueSettingInput.id = "fam" + fam;
   hueSetting.className = "hueSetting";
   hueSettingInput.type = "number";
@@ -199,6 +240,9 @@ function createHueSetting(fam) {
   //add attributes to contents
 
   document.getElementById("hueSettings").appendChild(hueSetting);
+  hueSetting.appendChild(hueNameLabel);
+  hueNameLabel.appendChild(hueNameLabelText);
+  hueSetting.appendChild(hueNameInput);
   hueSetting.appendChild(hueSettingLabel);
   hueSettingLabel.appendChild(hueSettingLabelText);
   hueSetting.appendChild(hueSettingInput);
@@ -217,21 +261,34 @@ function createSwatch(fam, step) {
   let actualContrast = Math.round(chroma.contrast(color, "white") * 100)/100; //get actual contrast of color 
   //console.log(hueID, hueValue, contrastID, contrastValue, saturation100);
 
+  let stepName = document.getElementById("nameS" + step).value;
+  let famName = document.getElementById("nameF" + fam).value;
+
+
   let swatch = document.createElement("div");
+  let swatchName = document.createElement("p");
+  let swatchNameText = document.createTextNode(famName + stepName);
   let swatchContrast = document.createElement("p");
   let swatchContrastText = document.createTextNode("Contrast: " + actualContrast);
   //create swatch contents
 
   swatch.id = "swatchF" + fam + "S" + step;
   swatch.className = "swatch";
+  swatchName.className = "swatchText";
   swatch.style.backgroundColor = color;
   swatchContrast.className = "swatchText";
   if (actualContrast < 4.5) {
+    swatchName.style.color = "black";
     swatchContrast.style.color = "black";
-  } else { swatchContrast.style.color = "white"; }
+  } else { 
+    swatchName.style.color = "white";
+    swatchContrast.style.color = "white"; 
+    }
   //add attributes to contents
 
   document.getElementById("grid").appendChild(swatch);
+  swatch.appendChild(swatchName);
+  swatchName.appendChild(swatchNameText);
   swatch.appendChild(swatchContrast);
   swatchContrast.appendChild(swatchContrastText);
   //put contents in DOM
