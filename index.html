@@ -8,101 +8,32 @@
 	<link href="style.css" rel="stylesheet" type="text/css" />
 </head>
 
-<body onload="updateColors()">
+<body onload="initializeUI()">
        
 
   <label for="saturation">Saturation:</label>
   <input type="number" id="saturation" name="saturation" value="100" min="0" max="100">
 
-
-  <div id="grid" class="grid">
+  <div class="metagrid">
     <div class="cornerCell"></div>
-
-    <div id="contrastCell1" class="contrastCell">
-      <label for="contrast">Target contrast:</label>
-      <input type="number" id="contrast1" name="contrast" value="2" onchange="updateColors()" min="1" max="21" step="0.1">
-    </div>
-    <div id="contrastCell2" class="contrastCell">
-      <label for="contrast">Target contrast:</label>
-      <input type="number" id="contrast2" name="contrast" value="3" onchange="updateColors()" min="1" max="21" step="0.1">
-    </div>
-    <div id="contrastCell3" class="contrastCell">
-      <label for="contrast">Target contrast:</label>
-      <input type="number" id="contrast3" name="contrast" value="4" onchange="updateColors()" min="1" max="21" step="0.1">
-    </div>
-
-    <div id="addContrast" class="contrastCell addContrast">
+    <div id="contrastSettings" class="contrastSettings"></div>
+    <div class="cell add addContrast">
       <button onclick="addContrastStep()">Add Contrast Step</button>
     </div>
-
-    <div class="hueCell">
-      <label for="hue">Hue:</label>
-      <input type="number" id="hue1" name="hue" value="10" onchange="updateColors()" min="0" max="360">
-    </div>
-
-    <div id="swatchR0C0" class="swatch">
-      <p id="nameR0C0" class="swatchText">Name</p>
-      <p id="satR0C0" class="swatchText">Sat:</p>
-      <p id="contrastR0C0" class="swatchText">Contrast: </p>
-    </div>
-    <div id="swatchR0C1" class="swatch">
-      <p id="nameR0C1" class="swatchText">Name</p>
-      <p id="satR0C1" class="swatchText">Sat:</p>
-      <p id="contrastR0C1" class="swatchText">Contrast: </p>
-    </div>
-    <div id="swatchR0C2" class="swatch">
-      <p id="nameR0C2" class="swatchText">Name</p>
-      <p id="satR0C2" class="swatchText">Sat:</p>
-      <p id="contrastR0C2" class="swatchText">Contrast: </p>
-    </div>
-    <div id="swatchR0End" class="swatch"></div>
-    <div class="hueCell">
-      <label for="hue">Hue:</label>
-      <input type="number" id="hue2" name="hue" value="160" onchange="updateColors()" min="0" max="360">
-    </div>
-    <div id="swatchR1C0" class="swatch">
-      <p id="nameR1C0" class="swatchText">Name</p>
-      <p id="satR1C0" class="swatchText">Sat:</p>
-      <p id="contrastR1C0" class="swatchText">Contrast: </p>
-    </div>
-    <div id="swatchR1C1" class="swatch">
-      <p id="nameR1C1" class="swatchText">Name</p>
-      <p id="satR1C1" class="swatchText">Sat:</p>
-      <p id="contrastR1C1" class="swatchText">Contrast: </p>
-    </div>
-    <div id="swatchR1C2" class="swatch">
-      <p id="nameR1C2" class="swatchText">Name</p>
-      <p id="satR1C2" class="swatchText">Sat:</p>
-      <p id="contrastR1C2" class="swatchText">Contrast: </p>
-    </div>
-    <div id="swatchR1End" class="swatch"></div>
-    <div class="hueCell">
-      <label for="hue">Hue:</label>
-      <input type="number" id="hue3" name="hue" value="240" onchange="updateColors()" min="0" max="360">
-    </div>
-    <div id="swatchR2C0" class="swatch">
-      <p id="nameR2C0" class="swatchText">Name</p>
-      <p id="satR2C0" class="swatchText">Sat:</p>
-      <p id="contrastR2C0" class="swatchText">Contrast: </p>
-    </div>
-    <div id="swatchR2C1" class="swatch">
-      <p id="nameR2C1" class="swatchText">Name</p>
-      <p id="satR2C1" class="swatchText">Sat:</p>
-      <p id="contrastR2C1" class="swatchText">Contrast: </p>
-    </div>
-    <div id="swatchR2C2" class="swatch">
-      <p id="nameR2C2" class="swatchText">Name</p>
-      <p id="satR2C2" class="swatchText">Sat:</p>
-      <p id="contrastR2C2" class="swatchText">Contrast: </p>
-    </div>
-    <div id="swatchR2End" class="swatch"></div>
-    <div id="addHue" class="hueCell addHue">
+    <div id="hueSettings" class="hueSettings"></div>
+    <div id="grid" class="grid"></div>
+    <div class="cell add addHue">
       <button onclick="addHueFamily()">Add Hue Family</button>
     </div>
+
   </div>
+
+
+  
   <button onclick="makeColor()">Goooooo</button>
   <button onclick="updateColors()">update</button>
   <button onclick="getContrast(230, 100, 4.5)">get contrast</button>
+  <button onclick="delContrastStep(0)">Delete Contrast Step</button>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/chroma-js/2.1.2/chroma.min.js"></script>
 <script src="script.js"></script>
