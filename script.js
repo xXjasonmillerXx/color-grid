@@ -276,13 +276,7 @@ function createSwatch(fam, step) {
   let color = getContrast(hueValue, satValue, contrastValue); //get color
   let actualContrast = Math.round(chroma.contrast(color, "white") * 100)/100; //get actual contrast of color
   let hex = chroma(color).hex();
-  let h = chroma(color).get('hsl.h');
-  let hue = Math.round(h * 10) / 10;
-  let s = chroma(color).get('hsl.s');
-  let sat = Math.round(s * 1000) / 10;
-  let l = chroma(color).get('hsl.l');
-  let lum = Math.round(l * 1000) / 10;
-  console.log(h, s, l);
+  let hsl = chroma(color).css('hsl');
   //console.log(hueID, hueValue, contrastID, contrastValue, saturation100);
 
   let stepName = document.getElementById("nameS" + step).value;
@@ -296,7 +290,7 @@ function createSwatch(fam, step) {
   let swatchHex = document.createElement("p");
   let swatchHexText = document.createTextNode(hex);
   let swatchHsl = document.createElement("p");
-  let swatchHslText = document.createTextNode("hsl(" + hue + " " + sat + " " + lum + ");");
+  let swatchHslText = document.createTextNode(hsl);
   let ack = document.createElement("div");
   let ackName = document.createElement("p");
   let ackNameText = document.createTextNode("Copied!");
