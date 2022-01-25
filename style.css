@@ -55,11 +55,25 @@ p {
 
 .swatchText {
   font-size: 0.75rem;
-  opacity: 80%;
+  line-height: 1.125rem;
+  opacity: 100%;
 }
 
 .nameInput {
   width: auto;
   minwidth: 80px;
   maxwidth: 160px;
+}
+
+.ack {
+  opacity: 0%;
+  transition: opacity 250ms ease;
+  background-color: black;
+  color: white;
+  font-size: 0.75rem;
+  padding: 4px;
+  border-radius: 2px;
+  float: right;
+  //top: 8px;
+  //right: 8px;
 }

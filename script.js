@@ -1,12 +1,26 @@
 //TODO
 //add end hue and easing
-//add offsets
-//come up with saturation solution
+//come up with better saturation solution. easing?
 //json import/export/save
+//black and white (maybe as one-off colors)?
+//reorder steps/fams
+//dark/neutral mode
+
+//add example text to swatches
+//configuration of swatch content
+//customizable light and dark contrast comparisons (instead of pure white/black)
+//sideproject: normalized colorspace
+//apca support
+//add offsets
 //style dictionary compatibility
 //figma plugin
-//dark mode
-//reorder steps/fams
+//display/documentation mode - json behind the scenes, all inputs hidden
+//assistive tools for more than just base colors
+//notes for steps/fams
+//post on twitter
+//write lil blog post
+//promote on sidebar and other places
+//win
 
 let contrastSteps = 3;
 let gridCols = contrastSteps + 2;
@@ -76,6 +90,7 @@ function delContrastStep(event) {
 function addHueFamily() {
   hueFamilies++;
   hues.push(0);
+  hueNames.push("-");
   updateHueSettings();
   updateSwatches();
 }
@@ -257,32 +272,55 @@ function createSwatch(fam, step) {
   //console.log(hueID, hueValue);
   let contrastID = "step" + step; //get id of corresponding contrast input
   let contrastValue = document.getElementById(contrastID).value; //get value of contrast input
-  let color = getContrast(hueValue, saturation100, contrastValue); //get color
-  let actualContrast = Math.round(chroma.contrast(color, "white") * 100)/100; //get actual contrast of color 
+  let satValue = document.getElementById("saturation").value;
+  let color = getContrast(hueValue, satValue, contrastValue); //get color
+  let actualContrast = Math.round(chroma.contrast(color, "white") * 100)/100; //get actual contrast of color
+  let hex = chroma(color).hex();
+  let h = chroma(color).get('hsl.h');
+  let hue = Math.round(h * 10) / 10;
+  let s = chroma(color).get('hsl.s');
+  let sat = Math.round(s * 1000) / 10;
+  let l = chroma(color).get('hsl.l');
+  let lum = Math.round(l * 1000) / 10;
+  console.log(h, s, l);
   //console.log(hueID, hueValue, contrastID, contrastValue, saturation100);
 
   let stepName = document.getElementById("nameS" + step).value;
   let famName = document.getElementById("nameF" + fam).value;
-
 
   let swatch = document.createElement("div");
   let swatchName = document.createElement("p");
   let swatchNameText = document.createTextNode(famName + stepName);
   let swatchContrast = document.createElement("p");
   let swatchContrastText = document.createTextNode("Contrast: " + actualContrast);
+  let swatchHex = document.createElement("p");
+  let swatchHexText = document.createTextNode(hex);
+  let swatchHsl = document.createElement("p");
+  let swatchHslText = document.createTextNode("hsl(" + hue + " " + sat + " " + lum + ");");
+  let ack = document.createElement("div");
+  let ackName = document.createElement("p");
+  let ackNameText = document.createTextNode("Copied!");
   //create swatch contents
 
   swatch.id = "swatchF" + fam + "S" + step;
   swatch.className = "swatch";
+  swatch.addEventListener("click", copyHsl);
   swatchName.className = "swatchText";
   swatch.style.backgroundColor = color;
   swatchContrast.className = "swatchText";
+  swatchHex.id = "hexF" + fam + "S" + step;
+  swatchHex.className = "swatchText swatchHex";
+  swatchHsl.id = "hslF" + fam + "S" + step;
+  swatchHsl.className = "swatchText swatchHsl";
+  ack.className = "ack";
   if (actualContrast < 4.5) {
-    swatchName.style.color = "black";
-    swatchContrast.style.color = "black";
+    swatch.style.color = "black";
+    ack.style.backgroundColor = "black";
+    ack.style.color = "white";
   } else { 
-    swatchName.style.color = "white";
-    swatchContrast.style.color = "white"; 
+    swatch.style.color = "white";
+    ack.style.backgroundColor = "white";
+    ack.style.color = "black";
     }
   //add attributes to contents
 
@@ -291,10 +329,44 @@ function createSwatch(fam, step) {
   swatchName.appendChild(swatchNameText);
   swatch.appendChild(swatchContrast);
   swatchContrast.appendChild(swatchContrastText);
+  swatch.appendChild(swatchHex);
+  swatchHex.appendChild(swatchHexText);
+  swatch.appendChild(swatchHsl);
+  swatchHsl.appendChild(swatchHslText);
+  swatch.appendChild(ack);
+  ack.appendChild(ackName);
+  ackName.appendChild(ackNameText);
   //put contents in DOM
 }
   
 //////////////////////////////////////////////
+
+function copyHex() {
+  let swatch = this.id;
+  let copyText = this.getElementsByClassName("swatchHex")[0].innerHTML;
+  console.log(copyText);
+
+   /* Copy the text inside the text field */
+  navigator.clipboard.writeText(copyText);
+
+  let ack = this.getElementsByClassName("ack")[0];
+  ack.style.opacity = "80%"; //make Ack visible
+  setTimeout(function(){ ack.style.opacity = "0%" }, 2000); //make Ack invisible again after delay
+}
+
+function copyHsl() {
+  let swatch = this.id;
+  let copyText = this.getElementsByClassName("swatchHsl")[0].innerHTML;
+  console.log(copyText);
+
+   /* Copy the text inside the text field */
+  navigator.clipboard.writeText(copyText);
+
+  let ack = this.getElementsByClassName("ack")[0];
+  ack.style.opacity = "80%"; //make Ack visible
+  setTimeout(function(){ ack.style.opacity = "0%" }, 2000); //make Ack invisible again after delay
+}
+
 
 
 function getContrast(hue, sat100, contrast) {
