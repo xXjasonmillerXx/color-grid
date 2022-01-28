@@ -5,11 +5,15 @@
 //black and white (maybe as one-off colors)?
 //reorder steps/fams
 //dark/neutral mode
+//choose swatches to exclude from display or export
+//if all swatches in a column are white or black, display one supertall swatch instead
 
+//more than one scale of steps?
 //add example text to swatches
 //configuration of swatch content
 //customizable light and dark contrast comparisons (instead of pure white/black)
 //sideproject: normalized colorspace
+//mesh gradient from swatches
 //apca support
 //add offsets
 //style dictionary compatibility
@@ -25,7 +29,7 @@
 let contrastSteps = 3;
 let gridCols = contrastSteps + 2;
 let hueFamilies = 3;
-//let gridRows = hueFamilies + 2;
+let flip = "false";
 
 let hue;
 let startHue = 200;
@@ -139,9 +143,9 @@ function updateContrastSettings() {
 }
 
 function updateHueSettings() {
-  let hueValues = document.getElementsByName("hue");
-  for (let i = 0; i < hueValues.length; i++) {
-    hues[i] = hueValues[i].value;
+  let hueStartValues = document.getElementsByName("hue");
+  for (let i = 0; i < hueStartValues.length; i++) {
+    hues[i] = hueStartValues[i].value;
   } //update hues array with current hue values
   //console.log(hues);
 
@@ -159,10 +163,11 @@ function updateHueSettings() {
   //grid.style.gridTemplateRows = "repeat(" + hueFamilies + ", 1fr)";
   for (let fam = 0; fam < hueFamilies; fam++) {
     createHueSetting(fam); //create setting UI for each step
+    createEndHueSetting(fam); //create end hue setting for each
 
     let id = "fam" + fam;
     document.getElementById(id).value = hues[fam];
-    //console.log(id, hueValues[fam].value);
+    //console.log(id, hueStartValues[fam].value);
     //add back previous contrast values
 
     let nameID = "nameF" + fam;
@@ -266,10 +271,82 @@ function createHueSetting(fam) {
   //put contents in DOM
 }
 
+function createEndHueSetting(fam) {
+  let hueEndSetting = document.createElement("div");
+  let hueEndSettingLabel = document.createElement("label");
+  let hueEndSettingLabelText = document.createTextNode("Hue: ");
+  let hueEndSettingInput = document.createElement("input");
+  let hueEndSettingDelete = document.createElement("button");
+  let hueEndSettingDeleteText = document.createTextNode("Delete");
+  //create hueEndSetting contents
+
+  hueEndSetting.id = "hueEndSetting" + fam;
+  hueEndSettingInput.id = "famEnd" + fam;
+  hueEndSetting.className = "hueEndSetting";
+  hueEndSettingInput.type = "number";
+  hueEndSettingInput.name = "hue";
+  hueEndSettingInput.addEventListener("change", updateSwatches);
+  hueEndSettingInput.addEventListener("click", hueEndSettingInput.select);
+  hueEndSettingInput.min = "-360";
+  hueEndSettingInput.max = "360";
+  //hueEndSettingDelete.addEventListener("click", delHueEndStep);
+  //add attributes to contents
+
+  document.getElementById("hueEndSettings").appendChild(hueEndSetting);
+  hueEndSetting.appendChild(hueEndSettingLabel);
+  hueEndSettingLabel.appendChild(hueEndSettingLabelText);
+  hueEndSetting.appendChild(hueEndSettingInput);
+  hueEndSetting.appendChild(hueEndSettingDelete);
+  hueEndSettingDelete.appendChild(hueEndSettingDeleteText);
+  //put contents in DOM
+}
+
+function calcHue(fam, step) {
+  let hueStartID = "fam" + fam; //get ids of hue inputs
+  let hueEndID = "famEnd" + fam;
+  let hueStartValue = document.getElementById(hueStartID).value; //get values of hue inputs
+  //console.log(hueID, hueStartValue);
+  let hueEndValue = document.getElementById("hueEnd").value;
+  let hueDifference = hueStartValue - hueEndValue; 
+  let result = hueStartValue - ((hueDifference/(contrastSteps-1))*step); //calculate actual hue of each swatch
+  //console.log(result, hueStartValue, hueEndValue, hueDifference, contrastSteps, step);
+  return result;
+}
+
+function calcHueFlipped(fam, step) {
+  let hueStartID = "fam" + fam; //get ids of hue inputs
+  let hueEndID = "famEnd" + fam;
+  let hueStartValue = document.getElementById(hueStartID).value; //get values of hue inputs
+  //console.log(hueID, hueStartValue);
+  let hueEndValue = document.getElementById("hueEnd").value;
+  let hueDifference = hueStartValue - (parseInt(hueEndValue) + 360); 
+  let result = hueStartValue - ((hueDifference/(contrastSteps-1))*step); //calculate actual hue of each swatch
+  if (result >= 360) {
+    result = result - 360;
+  } else { 
+    result = result;
+  }
+  //console.log(result, hueStartValue, hueEndValue, hueDifference, contrastSteps, step);
+  return result;
+} 
+
+function flipHues() {
+  if (flip == true) {
+    flip = false; 
+  } else {
+    flip = true;
+  }
+  updateSwatches();
+  console.log(flip);
+}
+
 function createSwatch(fam, step) {
-  let hueID = "fam" + fam; //get id of corresponding hue input
-  let hueValue = document.getElementById(hueID).value; //get value of hue input
-  //console.log(hueID, hueValue);
+  let hueValue;
+  if (flip == true) {
+    hueValue = calcHueFlipped(fam, step); //get hue from wraparound technique
+  } else {
+    hueValue = calcHue(fam, step); //get hue from normal technique
+  }
   let contrastID = "step" + step; //get id of corresponding contrast input
   let contrastValue = document.getElementById(contrastID).value; //get value of contrast input
   let satValue = document.getElementById("saturation").value;
@@ -277,7 +354,7 @@ function createSwatch(fam, step) {
   let actualContrast = Math.round(chroma.contrast(color, "white") * 100)/100; //get actual contrast of color
   let hex = chroma(color).hex();
   let hsl = chroma(color).css('hsl');
-  //console.log(hueID, hueValue, contrastID, contrastValue, saturation100);
+  //console.log(hueID, hueStartValue, contrastID, contrastValue, saturation100);
 
   let stepName = document.getElementById("nameS" + step).value;
   let famName = document.getElementById("nameF" + fam).value;

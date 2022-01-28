@@ -13,6 +13,11 @@
   <label for="saturation">Saturation:</label>
   <input id="saturation" name="saturation" type="number" value="100" min="0" max="100" onchange="updateSwatches()" onclick="this.select()" >
 
+  <label for="hueEnd">End Hue:</label>
+  <input id="hueEnd" name="hueEnd" type="number" value="100" min="-360" max="360"
+  onchange="updateSwatches()" onclick="this.select()" >
+  <button id="flip" onclick="flipHues()">Flip</button>
+
   <div class="metagrid">
     <div class="cornerCell"></div>
     <div id="contrastSettings" class="contrastSettings"></div>
@@ -21,11 +26,13 @@
     </div>
     <div id="hueSettings" class="hueSettings"></div>
     <div id="grid" class="grid"></div>
+    <div id="hueEndSettings" class="hueSettings"></div>
     <div class="cell add addHue">
       <button onclick="addHueFamily()">Add Hue Family</button>
     </div>
 
   </div>
+  <div id="gradient" style="height: 100px; width: 100%;"></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/chroma-js/2.1.2/chroma.min.js"></script>
 <script src="script.js"></script>
