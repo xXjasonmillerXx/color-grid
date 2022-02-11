@@ -7,7 +7,7 @@ body {
   display: grid;
   width: auto;
   height: auto;
-  grid-template-columns: minmax(120px, 160px) auto auto;
+  grid-template-columns: minmax(120px, 160px) auto minmax(120px, 160px);
   grid-auto-rows: minmax(80px, 120px) auto;
 }
 
@@ -46,6 +46,11 @@ body {
   //background-color: rgb(255, 255, 255);
   border-radius: 2px;
   padding: 8px;
+}
+
+textarea {
+  width: 100%;
+  height: 120px;
 }
 
 

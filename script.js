@@ -1,5 +1,4 @@
 //TODO
-//add end hue and easing
 //come up with better saturation solution. easing?
 //json import/export/save
 //black and white (maybe as one-off colors)?
@@ -26,28 +25,66 @@
 //promote on sidebar and other places
 //win
 
-let contrastSteps = 3;
-let gridCols = contrastSteps + 2;
-let hueFamilies = 3;
-let flip = "false";
+//example json should have: # contrast steps, # hue families, start hues, end hues, contrast targets, saturations, names
+//might need a json "savefile" with full UI info, and then a "color export" which just lists colors
 
-let hue;
-let startHue = 200;
-let endHue = 210;
-let saturation100 = 100;
-let saturation;
-let contrast;
-let lightness = 0;
-let color;
+let contrastSteps = 3;
+//let gridCols = contrastSteps + 2;
+let hueFamilies = 3;
+
+//let hue;
+//let startHue = 200;
+//let endHue = 210;
+//let saturation100 = 100;
+let saturation = document.getElementById("saturation").value;
+//let contrast;
+//let lightness = 0;
+//let color;
 
 let contrasts = [];
-let hues = [];
+let hueStarts = [];
+let hueEnds = [];
+let hueEndEnabled = [false, false, false];
+let flips = [false, false, false];
 
 let stepNames = [];
 let hueNames = [];
 
+let json = {}
 
-//updateUI should contain functions like update contrast settings, update hue settings, update swatches
+function jsonWrite() {
+  json = {
+    "contrastSteps": contrastSteps,
+    "stepNames": stepNames,
+    "contrasts": contrasts,
+
+    "saturation": saturation,
+
+    "hueFamilies": hueFamilies,
+    "hueNames": hueNames,
+    "hueStarts": hueStarts,
+    "hueEnds": hueEnds,
+    "hueEndEnabled": hueEndEnabled,
+
+    "flips": flips,
+  }
+  let jsonString = JSON.stringify(json);
+  console.log(jsonString);
+  let textarea = document.getElementById("jsonTextarea");
+  textarea.value = jsonString;
+}
+
+function jsonDownload() {
+  console.log(JSON.stringify(json));
+
+  const a = document.createElement("a");
+  const file = new Blob([JSON.stringify(json)], { type: "text/plain" });
+  a.href = URL.createObjectURL(file);
+  a.download = "colorgrid.json";
+  a.click();
+}
+
+
 function initializeUI() {
   updateUI();
   document.getElementById("step0").value = 3;
@@ -56,13 +93,16 @@ function initializeUI() {
   document.getElementById("fam0").value = 350;
   document.getElementById("fam1").value = 160;
   document.getElementById("fam2").value = 220;
+  document.getElementById("famEnd0").value = 350;
+  document.getElementById("famEnd1").value = 160;
+  document.getElementById("famEnd2").value = 220;
   document.getElementById("nameS0").value = 1;
   document.getElementById("nameS1").value = 2;
   document.getElementById("nameS2").value = 3;
   document.getElementById("nameF0").value = "red";
   document.getElementById("nameF1").value = "green";
   document.getElementById("nameF2").value = "blue";
-  console.log(nameS0.value);
+  //console.log(fam0.value, famEnd0.value);
   updateUI();
   //updateSwatches();
 }
@@ -71,14 +111,15 @@ function updateUI() {
   updateContrastSettings();
   updateHueSettings();
   updateSwatches();
+  jsonWrite();
+  //console.log(json);
 }
 
 function addContrastStep() {
   contrastSteps++;
   contrasts.push(2);
   stepNames.push("-");
-  updateContrastSettings();
-  updateSwatches();
+  updateUI();
 }
 
 function delContrastStep(event) {
@@ -86,17 +127,17 @@ function delContrastStep(event) {
     let contrastSetting = this.parentNode.id;
     document.getElementById(contrastSetting).remove();
     contrastSteps--;
-    updateContrastSettings();
-    updateSwatches();
+    updateUI();
   }
 }
 
 function addHueFamily() {
   hueFamilies++;
-  hues.push(0);
+  hueStarts.push(0);
   hueNames.push("-");
-  updateHueSettings();
-  updateSwatches();
+  hueEndEnabled.push(false);
+  flips.push(false);
+  updateUI();
 }
 
 function delHueStep(event) {
@@ -105,17 +146,20 @@ function delHueStep(event) {
     //console.log(hueSetting);
     document.getElementById(hueSetting).remove();
     hueFamilies--;
-    updateHueSettings();
-    updateSwatches();
+    updateUI();
   }
 }
 
-function updateContrastSettings() {
+function updateContrastData() {
   let contrastValues = document.getElementsByName("contrast");
   for (let i = 0; i < contrastValues.length; i++) {
     contrasts[i] = contrastValues[i].value;
   } //update contrasts array with current contrast values
   //console.log(contrasts);
+}
+
+function updateContrastSettings() {
+  updateContrastData();
 
   let stepNameValues = document.getElementsByClassName("stepName");
   for (let i = 0; i < stepNameValues.length; i++) {
@@ -142,12 +186,19 @@ function updateContrastSettings() {
   }
 }
 
-function updateHueSettings() {
-  let hueStartValues = document.getElementsByName("hue");
+function updateHueData() {
+  let hueStartValues = document.getElementsByName("hueStart");
+  let hueEndValues = document.getElementsByName("hueEnd");
   for (let i = 0; i < hueStartValues.length; i++) {
-    hues[i] = hueStartValues[i].value;
-  } //update hues array with current hue values
-  //console.log(hues);
+    hueStarts[i] = hueStartValues[i].value;
+  } //update start hues array with current hue values
+  for (let i = 0; i < hueEndValues.length; i++) {
+    hueEnds[i] = hueEndValues[i].value;
+  } //update end hues array with current hue values
+}
+
+function updateHueSettings() {
+  updateHueData();
 
   let hueNameValues = document.getElementsByClassName("hueName");
   for (let i = 0; i < hueNameValues.length; i++) {
@@ -157,6 +208,7 @@ function updateHueSettings() {
   let hueSettings = document.getElementById("hueSettings");
   while (hueSettings.firstChild) {
     hueSettings.removeChild(hueSettings.lastChild);
+    hueEndSettings.removeChild(hueEndSettings.lastChild);
   } //remove all existing contents of grid so we can start fresh
 
   hueSettings.style.gridTemplateRows = "repeat(" + hueFamilies + ", 1fr)";
@@ -165,8 +217,11 @@ function updateHueSettings() {
     createHueSetting(fam); //create setting UI for each step
     createEndHueSetting(fam); //create end hue setting for each
 
-    let id = "fam" + fam;
-    document.getElementById(id).value = hues[fam];
+    let idStart = "fam" + fam;
+    document.getElementById(idStart).value = hueStarts[fam];
+
+    let idEnd = "famEnd" + fam;
+    document.getElementById(idEnd).value = hueEnds[fam];
     //console.log(id, hueStartValues[fam].value);
     //add back previous contrast values
 
@@ -186,6 +241,9 @@ function updateSwatches() {
       createSwatch(fam, step);
     }
   }
+  updateHueData();
+  updateContrastData();
+  jsonWrite();
 }
 
 function createContrastSetting(step) {
@@ -250,7 +308,7 @@ function createHueSetting(fam) {
   hueSettingInput.id = "fam" + fam;
   hueSetting.className = "hueSetting";
   hueSettingInput.type = "number";
-  hueSettingInput.name = "hue";
+  hueSettingInput.name = "hueStart";
   //hueSettingInput.value = "0";
   hueSettingInput.addEventListener("change", updateSwatches);
   hueSettingInput.addEventListener("click", hueSettingInput.select);
@@ -274,31 +332,53 @@ function createHueSetting(fam) {
 function createEndHueSetting(fam) {
   let hueEndSetting = document.createElement("div");
   let hueEndSettingLabel = document.createElement("label");
-  let hueEndSettingLabelText = document.createTextNode("Hue: ");
+  let hueEndSettingLabelText = document.createTextNode("End Hue: ");
   let hueEndSettingInput = document.createElement("input");
-  let hueEndSettingDelete = document.createElement("button");
-  let hueEndSettingDeleteText = document.createTextNode("Delete");
+  //let hueEndSettingDelete = document.createElement("button");
+  //let hueEndSettingDeleteText = document.createTextNode("Delete");
+  let hueEndSettingFlip = document.createElement("button");
+  let hueEndSettingFlipText = document.createTextNode("Flip");
+  let hueEndSettingToggle = document.createElement("button");
+  let hueEndSettingToggleText = document.createTextNode("Remove End Hue");
   //create hueEndSetting contents
 
   hueEndSetting.id = "hueEndSetting" + fam;
   hueEndSettingInput.id = "famEnd" + fam;
   hueEndSetting.className = "hueEndSetting";
   hueEndSettingInput.type = "number";
-  hueEndSettingInput.name = "hue";
+  hueEndSettingInput.name = "hueEnd";
   hueEndSettingInput.addEventListener("change", updateSwatches);
   hueEndSettingInput.addEventListener("click", hueEndSettingInput.select);
   hueEndSettingInput.min = "-360";
   hueEndSettingInput.max = "360";
-  //hueEndSettingDelete.addEventListener("click", delHueEndStep);
+  hueEndSettingFlip.id = "flip" + fam;
+  hueEndSettingFlip.addEventListener("click", flipHues);
+  hueEndSettingToggle.id = "hueEndEnable" + fam;
+  hueEndSettingToggle.addEventListener("click", toggleHueEnd);
   //add attributes to contents
 
   document.getElementById("hueEndSettings").appendChild(hueEndSetting);
   hueEndSetting.appendChild(hueEndSettingLabel);
-  hueEndSettingLabel.appendChild(hueEndSettingLabelText);
   hueEndSetting.appendChild(hueEndSettingInput);
-  hueEndSetting.appendChild(hueEndSettingDelete);
-  hueEndSettingDelete.appendChild(hueEndSettingDeleteText);
+  hueEndSetting.appendChild(hueEndSettingFlip);
+  hueEndSettingLabel.appendChild(hueEndSettingLabelText);
+  hueEndSettingFlip.appendChild(hueEndSettingFlipText);
+  //hueEndSetting.appendChild(hueEndSettingDelete);
+  //hueEndSettingDelete.appendChild(hueEndSettingDeleteText);
+  hueEndSetting.appendChild(hueEndSettingToggle);
+  hueEndSettingToggle.appendChild(hueEndSettingToggleText);
   //put contents in DOM
+  //console.log(hueEndEnabled[fam], fam);
+
+  if (hueEndEnabled[fam] == false) {
+    hueEndSettingToggleText.nodeValue = "Add End Hue";
+    hueEndSettingLabel.style.display = "none";
+    hueEndSettingInput.style.display = "none";
+    hueEndSettingFlip.style.display = "none";
+    //console.log(hueEnds[fam], hueStarts[fam]);
+    //if hue end is true, append elements to DOM, else don't
+    //console.log(hueEndEnabled[fam]);
+  }
 }
 
 function calcHue(fam, step) {
@@ -306,7 +386,7 @@ function calcHue(fam, step) {
   let hueEndID = "famEnd" + fam;
   let hueStartValue = document.getElementById(hueStartID).value; //get values of hue inputs
   //console.log(hueID, hueStartValue);
-  let hueEndValue = document.getElementById("hueEnd").value;
+  let hueEndValue = document.getElementById(hueEndID).value;
   let hueDifference = hueStartValue - hueEndValue; 
   let result = hueStartValue - ((hueDifference/(contrastSteps-1))*step); //calculate actual hue of each swatch
   //console.log(result, hueStartValue, hueEndValue, hueDifference, contrastSteps, step);
@@ -318,7 +398,7 @@ function calcHueFlipped(fam, step) {
   let hueEndID = "famEnd" + fam;
   let hueStartValue = document.getElementById(hueStartID).value; //get values of hue inputs
   //console.log(hueID, hueStartValue);
-  let hueEndValue = document.getElementById("hueEnd").value;
+  let hueEndValue = document.getElementById("famEnd" + fam).value;
   let hueDifference = hueStartValue - (parseInt(hueEndValue) + 360); 
   let result = hueStartValue - ((hueDifference/(contrastSteps-1))*step); //calculate actual hue of each swatch
   if (result >= 360) {
@@ -330,26 +410,54 @@ function calcHueFlipped(fam, step) {
   return result;
 } 
 
-function flipHues() {
-  if (flip == true) {
-    flip = false; 
+function flipHues(event) {
+  let family = this.parentNode.id; //get id of parent
+  let key = family.substring(13); //get only fam number from end of id
+  //console.log(event, family, key);
+
+  if (flips[key] == true) {
+    flips[key] = false; 
   } else {
-    flip = true;
-  }
+    flips[key] = true;
+  } //update flips array with new value
   updateSwatches();
-  console.log(flip);
+  console.log(flips);
+}
+
+function toggleHueEnd() {
+  let family = this.parentNode.id; //get id of parent
+  let key = family.substring(13); //get only fam number from end of id
+  //console.log(event, family, key);
+
+  if (hueEndEnabled[key] == true) {
+    hueEndEnabled[key] = false; 
+  } else {
+    hueEndEnabled[key] = true;
+  } //update flips array with new value
+
+  let hueEndInput = "famEnd" + key;
+  let hueStartInput = "fam" + key;
+  document.getElementById(hueEndInput).value = document.getElementById(hueStartInput).value; //whenever hue end is toggled, reset it to equal the start hue
+  updateHueSettings();
+  updateSwatches();
 }
 
 function createSwatch(fam, step) {
   let hueValue;
-  if (flip == true) {
-    hueValue = calcHueFlipped(fam, step); //get hue from wraparound technique
+  if (hueEndEnabled[fam] == true) {
+    if (flips[fam] == true) {
+      hueValue = calcHueFlipped(fam, step); //get hue from wraparound technique
+    } else {
+      hueValue = calcHue(fam, step); //get hue from normal technique
+    }
   } else {
-    hueValue = calcHue(fam, step); //get hue from normal technique
+    let hueStartID = "fam" + fam; //get ids of hue inputs
+    hueValue = document.getElementById(hueStartID).value; //use hue start value as only hue value
   }
+
   let contrastID = "step" + step; //get id of corresponding contrast input
   let contrastValue = document.getElementById(contrastID).value; //get value of contrast input
-  let satValue = document.getElementById("saturation").value;
+  let satValue = saturation;
   let color = getContrast(hueValue, satValue, contrastValue); //get color
   let actualContrast = Math.round(chroma.contrast(color, "white") * 100)/100; //get actual contrast of color
   let hex = chroma(color).hex();
@@ -411,6 +519,7 @@ function createSwatch(fam, step) {
 }
   
 //////////////////////////////////////////////
+
 
 function copyHex() {
   let swatch = this.id;
