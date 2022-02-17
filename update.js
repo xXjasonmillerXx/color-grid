@@ -1,8 +1,10 @@
 function updateUI() {
   //jsonWrite();
+  document.getElementById("saturation").value = json.saturation;
   updateContrastSettings();
   updateHueSettings();
   updateSwatches();
+
   //jsonRead();
   //console.log(json);
 }
@@ -12,9 +14,6 @@ function updateUIFromInputs() {
   updateContrastDataFromInputs();
   updateHueDataFromInputs();
   json.saturation = document.getElementById("saturation").value;
-  console.log(json.saturation);
-  jsonWrite();
-  console.log(json);
   updateContrastSettings();
   updateHueSettings();
   updateSwatches();
@@ -117,5 +116,4 @@ function updateSwatches() {
       createSwatch(fam, step);
     }
   }
-  //jsonWrite();
 }
