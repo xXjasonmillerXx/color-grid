@@ -50,7 +50,8 @@ body {
 
 textarea {
   width: 100%;
-  height: 120px;
+  max-width: 600px;
+  height: 100px;
 }
 
 
@@ -59,8 +60,8 @@ p {
 }
 
 .swatchText {
-  font-size: 0.75rem;
-  line-height: 1.125rem;
+  font-size: 0.6875rem;
+  line-height: 1rem;
   opacity: 100%;
 }
 

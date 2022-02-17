@@ -11,7 +11,7 @@
 <body onload="initializeUI()">
 
   <label for="saturation">Saturation:</label>
-  <input id="saturation" name="saturation" type="number" value="100" min="0" max="100" onchange="updateSwatches()" onclick="this.select()" >
+  <input id="saturation" name="saturation" type="number" value="100" min="0" max="100" onchange="updateUIFromInputs()" onclick="this.select()" >
 
   <div class="metagrid">
     <div class="cornerCell"></div>
@@ -28,6 +28,7 @@
 
   </div>
   <textarea id="jsonTextarea" onchange="jsonRead()"></textarea>
+  <button onclick="jsonDownload()">Download</button>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/chroma-js/2.1.2/chroma.min.js"></script>
 <script src="script.js"></script>
 <script src="create.js"></script>

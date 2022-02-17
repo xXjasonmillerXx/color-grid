@@ -96,7 +96,7 @@ function createEndHueSetting(fam) {
 
   hueEndSetting.id = "hueEndSetting" + fam;
   hueEndSettingInput.id = "famEnd" + fam;
-  hueEndSetting.className = "hueEndSetting";
+  hueEndSetting.className = "hueSetting";
   hueEndSettingInput.type = "number";
   hueEndSettingInput.name = "hueEnd";
   hueEndSettingInput.addEventListener("change", updateSwatches);
@@ -122,7 +122,7 @@ function createEndHueSetting(fam) {
   //put contents in DOM
   //console.log(hueEndEnabled[fam], fam);
 
-  if (hueEndEnabled[fam] == false) {
+  if (json.hueEndEnabled[fam] == false) {
     hueEndSettingToggleText.nodeValue = "Add End Hue";
     hueEndSettingLabel.style.display = "none";
     hueEndSettingInput.style.display = "none";
@@ -135,7 +135,7 @@ function createEndHueSetting(fam) {
 
 function createSwatch(fam, step) {
   let hueValue;
-  if (hueEndEnabled[fam] == true) {
+  if (json.hueEndEnabled[fam] == true) {
     if (flips[fam] == true) {
       hueValue = calcHueFlipped(fam, step); //get hue from wraparound technique
     } else {
@@ -148,7 +148,7 @@ function createSwatch(fam, step) {
 
   let contrastID = "step" + step; //get id of corresponding contrast input
   let contrastValue = document.getElementById(contrastID).value; //get value of contrast input
-  let satValue = saturation;
+  let satValue = json.saturation;
   let color = getContrast(hueValue, satValue, contrastValue); //get color
   let actualContrast = Math.round(chroma.contrast(color, "white") * 100)/100; //get actual contrast of color
   let hex = chroma(color).hex();
