@@ -1,13 +1,15 @@
 //TODO
-//come up with better saturation solution. easing?
-//json import/export/save
+//saturation per hue family - lets you make grays
+//saturation adjustment per swatch
+//format json to conform to style dictionary spec, maybe with a setting
 //black and white (maybe as one-off colors)?
-//reorder steps/fams
-//dark/neutral mode
+//reorder steps/fams (maybe with arrows to swap neighbors)
+//dark/neutral theme
 //choose swatches to exclude from display or export
-//if all swatches in a column are white or black, display one supertall swatch instead
+//if all swatches in a column are white or black, display one supertall swatch instead?
 
 //more than one scale of steps?
+//come up with better saturation solution. easing?
 //add example text to swatches
 //configuration of swatch content
 //customizable light and dark contrast comparisons (instead of pure white/black)
@@ -41,8 +43,8 @@
 //let lightness = 0;
 //let color;
 
-let contrasts = [];
-let hueStarts = [];
+//let contrasts = [];
+//let hueStarts = [];
 let hueEnds = [];
 let hueEndEnabled = [false, false, false];
 let flips = [false, false, false];
@@ -51,7 +53,7 @@ let stepNames = [];
 let hueNames = [];
 
 let textarea = document.getElementById("jsonTextarea");
-
+let exportTextarea = document.getElementById("exportTextarea");
 
 let json = { 
   contrastSteps: 3,
@@ -65,6 +67,32 @@ let json = {
   hueEndEnabled: [ false, false, false ],
   flips: [ false, false, false ], 
   }
+
+let hsls = [];
+let hexes = [];
+
+let exportColors = {}
+
+function exportWrite() {
+  exportColors = {};
+  console.log(json.hueStarts, "exportwrite");
+  for(let h = 0; h < json.hueFamilies; h++) { //for each hue family
+    let hueName = json.hueNames[h];
+    console.log(hueName, "huename");
+    let step = {}
+    for(let c = 0; c < json.contrastSteps; c++) { //for each contrast step in the family
+      let stepName = json.stepNames[c];
+      console.log(stepName, "stepname");
+      step[hueName + stepName] = hsls[(h*json.hueFamilies)+c];
+      console.log(step[hueName + stepName]);
+    }
+    exportColors[hueName] = step;
+  }
+  //console.log(exportColors);
+  let exportString = JSON.stringify(exportColors, null, "\t");
+  //console.log(exportString, "exportString");
+  exportTextarea.value = exportString;
+}
 
 function jsonWrite() {
   //json = {
@@ -82,23 +110,24 @@ function jsonWrite() {
 
   //  "flips": flips,
   //}
-  let jsonString = JSON.stringify(json);
+  let jsonString = JSON.stringify(json, null, "\t");
   //console.log(jsonString);
   textarea.value = jsonString;
 }
 
 function jsonRead() {
+  json = {};
   json = JSON.parse(textarea.value);
-  contrastSteps = json.contrastSteps;
-  contrasts = json.contrasts;
-  saturation = json.saturation;
-  hueFamilies = json.hueFamilies;
-  hueNames = json.hueNames;
-  hueStarts = json.hueStarts;
-  hueEnds = json.hueEnds;
-  hueEndEnabled = json.hueEndEnabled;
-  flips = json.flips;
-  console.log(json);
+  //contrastSteps = json.contrastSteps;
+  //contrasts = json.contrasts;
+  //saturation = json.saturation;
+  //hueFamilies = json.hueFamilies;
+  //hueNames = json.hueNames;
+  //hueStarts = json.hueStarts;
+  //hueEnds = json.hueEnds;
+  //hueEndEnabled = json.hueEndEnabled;
+  //flips = json.flips;
+  //console.log(json);
   updateUI();
   console.log(json);
 }
@@ -116,7 +145,7 @@ function jsonDownload() {
 
 function initializeUI() {
   updateUI();
-  document.getElementById("step0").value = 3;
+  //document.getElementById("step0").value = 3;
   //document.getElementById("step1").value = 4.5;
   //document.getElementById("step2").value = 7;
   //document.getElementById("fam0").value = 350;
@@ -132,7 +161,7 @@ function initializeUI() {
   //document.getElementById("nameF1").value = "green";
   //document.getElementById("nameF2").value = "blue";
   //console.log(fam0.value, famEnd0.value);
-  updateUI();
+  //updateUI();
   //updateSwatches();
 }
 
@@ -146,8 +175,11 @@ function addContrastStep() {
 function delContrastStep(event) {
   if (json.contrastSteps > 1) {
     let contrastSetting = this.parentNode.id;
+    let index = contrastSetting.substring(15);
     document.getElementById(contrastSetting).remove();
     json.contrastSteps--;
+    json.stepNames.splice(index, 1);
+    json.contrasts.splice(index, 1);
     updateUI();
   }
 }
@@ -166,9 +198,15 @@ function addHueFamily() {
 function delHueStep(event) {
   if (json.hueFamilies > 1) {
     let hueSetting = this.parentNode.id;
-    //console.log(hueSetting);
+    let index = hueSetting.substring(10);
+    console.log(hueSetting, index);
     document.getElementById(hueSetting).remove();
     json.hueFamilies--;
+    json.hueNames.splice(index, 1);
+    json.hueStarts.splice(index, 1);
+    json.hueEnds.splice(index, 1);
+    json.hueEndEnabled.splice(index, 1);
+    json.flips.splice(index, 1);
     updateUI();
   }
 }

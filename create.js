@@ -152,7 +152,9 @@ function createSwatch(fam, step) {
   let color = getContrast(hueValue, satValue, contrastValue); //get color
   let actualContrast = Math.round(chroma.contrast(color, "white") * 100)/100; //get actual contrast of color
   let hex = chroma(color).hex();
+  hexes.push(hex);
   let hsl = chroma(color).css('hsl');
+  hsls.push(hsl);
   //console.log(hueID, hueStartValue, contrastID, contrastValue, saturation100);
 
   let stepName = document.getElementById("nameS" + step).value;

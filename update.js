@@ -1,10 +1,10 @@
 function updateUI() {
-  //jsonWrite();
+  jsonWrite();
   document.getElementById("saturation").value = json.saturation;
   updateContrastSettings();
   updateHueSettings();
   updateSwatches();
-
+  exportWrite();
   //jsonRead();
   //console.log(json);
 }
@@ -14,10 +14,11 @@ function updateUIFromInputs() {
   updateContrastDataFromInputs();
   updateHueDataFromInputs();
   json.saturation = document.getElementById("saturation").value;
-  updateContrastSettings();
-  updateHueSettings();
+  //updateContrastSettings();
+  //updateHueSettings();
   updateSwatches();
   jsonWrite();
+  exportWrite();
   console.log(json);
 }
 
@@ -38,18 +39,20 @@ function updateContrastDataFromInputs() {
 function updateHueDataFromInputs() {
   let hueStartValues = document.getElementsByName("hueStart");
   let hueEndValues = document.getElementsByName("hueEnd");
+  //console.log(hueEndValues);
   for (let i = 0; i < hueStartValues.length; i++) {
-    hueStarts[i] = hueStartValues[i].value;
+    json.hueStarts[i] = hueStartValues[i].value;
   } //update start hues array with current hue values
 
   for (let i = 0; i < hueEndValues.length; i++) {
-    hueEnds[i] = hueEndValues[i].value;
+    json.hueEnds[i] = hueEndValues[i].value;
   } //update end hues array with current hue values
 
   let hueNameValues = document.getElementsByClassName("hueName");
   for (let i = 0; i < hueNameValues.length; i++) {
-    hueNames[i] = hueNameValues[i].value;
+    json.hueNames[i] = hueNameValues[i].value;
   } //update huenames array with current huename values
+  //console.log(json.hueStarts);
 }
 
 function updateContrastSettings() {
@@ -106,6 +109,8 @@ function updateHueSettings() {
 
 
 function updateSwatches() {
+  hsls = [];
+  hexes = [];
   let grid = document.getElementById("grid");
   while (grid.firstChild) {
     grid.removeChild(grid.lastChild);

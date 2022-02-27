@@ -25,10 +25,16 @@
     <div class="cell add addHue">
       <button onclick="addHueFamily()">Add Hue Family</button>
     </div>
-
   </div>
+
+  <div>
+  <label for="jsonTextarea">Color Grid Data</label>
   <textarea id="jsonTextarea" onchange="jsonRead()"></textarea>
-  <button onclick="jsonDownload()">Download</button>
+  <button onclick="jsonDownload()">Download Save File</button>
+  </div>
+
+  <label for="exportTextarea">Color Export</label>
+  <textarea id="exportTextarea" readonly></textarea>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/chroma-js/2.1.2/chroma.min.js"></script>
   <script src="script.js"></script>
   <script src="create.js"></script>
