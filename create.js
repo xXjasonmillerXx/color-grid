@@ -48,6 +48,9 @@ function createHueSetting(fam) {
   let hueSettingLabel = document.createElement("label");
   let hueSettingLabelText = document.createTextNode("Hue: ");
   let hueSettingInput = document.createElement("input");
+  let hueSatLabel = document.createElement("label");
+  let hueSatLabelText = document.createTextNode("Sat: ");
+  let hueSatInput = document.createElement("input");
   let hueSettingDelete = document.createElement("button");
   let hueSettingDeleteText = document.createTextNode("Delete");
   //create hueSetting contents
@@ -66,6 +69,14 @@ function createHueSetting(fam) {
   hueSettingInput.addEventListener("click", hueSettingInput.select);
   hueSettingInput.min = "-360";
   hueSettingInput.max = "360";
+  hueSatInput.id = "sat" + fam;
+  hueSatInput.className = "hueSat";
+  hueSatInput.type = "number";
+  hueSatInput.name = "sat";
+  hueSatInput.addEventListener("change", updateUIFromInputs);
+  hueSatInput.addEventListener("click", hueSatInput.select);
+  hueSatInput.min = "0";
+  hueSatInput.max = "100";
   hueSettingDelete.addEventListener("click", delHueStep);
   //add attributes to contents
 
@@ -77,6 +88,9 @@ function createHueSetting(fam) {
   hueSettingLabel.appendChild(hueSettingLabelText);
   hueSetting.appendChild(hueSettingInput);
   hueSetting.appendChild(hueSettingDelete);
+  hueSetting.appendChild(hueSatLabel);
+  hueSetting.appendChild(hueSatInput);
+  hueSatLabel.appendChild(hueSatLabelText);
   hueSettingDelete.appendChild(hueSettingDeleteText);
   //put contents in DOM
 }
@@ -148,7 +162,7 @@ function createSwatch(fam, step) {
 
   let contrastID = "step" + step; //get id of corresponding contrast input
   let contrastValue = document.getElementById(contrastID).value; //get value of contrast input
-  let satValue = json.saturation;
+  let satValue = json.saturation[fam];
   let color = getContrast(hueValue, satValue, contrastValue); //get color
   let actualContrast = Math.round(chroma.contrast(color, "white") * 100)/100; //get actual contrast of color
   let hex = chroma(color).hex();

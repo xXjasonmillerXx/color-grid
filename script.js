@@ -59,7 +59,7 @@ let json = {
   contrastSteps: 3,
   stepNames: [ '1', '2', '3' ],
   contrasts: [ '3', '4.5', '7' ],
-  saturation: '100',
+  saturation: [ '100', '100', '80' ],
   hueFamilies: 3,
   hueNames: [ 'red', 'green', 'blue' ],
   hueStarts: [ '350', '160', '220' ],
@@ -75,16 +75,16 @@ let exportColors = {}
 
 function exportWrite() {
   exportColors = {};
-  console.log(json.hueStarts, "exportwrite");
+  //console.log(json.hueStarts, "exportwrite");
   for(let h = 0; h < json.hueFamilies; h++) { //for each hue family
     let hueName = json.hueNames[h];
-    console.log(hueName, "huename");
+    //console.log(hueName, "huename");
     let step = {}
     for(let c = 0; c < json.contrastSteps; c++) { //for each contrast step in the family
       let stepName = json.stepNames[c];
-      console.log(stepName, "stepname");
+      //console.log(stepName, "stepname");
       step[hueName + stepName] = hsls[(h*json.hueFamilies)+c];
-      console.log(step[hueName + stepName]);
+      //console.log(step[hueName + stepName]);
     }
     exportColors[hueName] = step;
   }
@@ -99,15 +99,12 @@ function jsonWrite() {
   //  "contrastSteps": contrastSteps,
   //  "stepNames": stepNames,
   //  "contrasts": contrasts,
-
   //  "saturation": saturation,
-
   //  "hueFamilies": hueFamilies,
   //  "hueNames": hueNames,
   //  "hueStarts": hueStarts,
   //  "hueEnds": hueEnds,
   //  "hueEndEnabled": hueEndEnabled,
-
   //  "flips": flips,
   //}
   let jsonString = JSON.stringify(json, null, "\t");
@@ -134,7 +131,6 @@ function jsonRead() {
 
 function jsonDownload() {
   //console.log(JSON.stringify(json));
-
   const a = document.createElement("a");
   const file = new Blob([JSON.stringify(json)], { type: "text/plain" });
   a.href = URL.createObjectURL(file);
@@ -142,24 +138,8 @@ function jsonDownload() {
   a.click();
 }
 
-
 function initializeUI() {
   updateUI();
-  //document.getElementById("step0").value = 3;
-  //document.getElementById("step1").value = 4.5;
-  //document.getElementById("step2").value = 7;
-  //document.getElementById("fam0").value = 350;
-  //document.getElementById("fam1").value = 160;
-  //document.getElementById("fam2").value = 220;
-  //document.getElementById("famEnd0").value = 350;
-  //document.getElementById("famEnd1").value = 160;
-  //document.getElementById("famEnd2").value = 220;
-  //document.getElementById("nameS0").value = 1;
-  //document.getElementById("nameS1").value = 2;
-  //document.getElementById("nameS2").value = 3;
-  //document.getElementById("nameF0").value = "red";
-  //document.getElementById("nameF1").value = "green";
-  //document.getElementById("nameF2").value = "blue";
   //console.log(fam0.value, famEnd0.value);
   //updateUI();
   //updateSwatches();

@@ -1,6 +1,6 @@
 function updateUI() {
   jsonWrite();
-  document.getElementById("saturation").value = json.saturation;
+  //document.getElementById("saturation").value = json.saturation;
   updateContrastSettings();
   updateHueSettings();
   updateSwatches();
@@ -13,7 +13,7 @@ function updateUIFromInputs() {
   //jsonWrite();
   updateContrastDataFromInputs();
   updateHueDataFromInputs();
-  json.saturation = document.getElementById("saturation").value;
+  //json.saturation = document.getElementById("saturation").value;
   //updateContrastSettings();
   //updateHueSettings();
   updateSwatches();
@@ -33,6 +33,11 @@ function updateContrastDataFromInputs() {
   for (let i = 0; i < stepNameValues.length; i++) {
     json.stepNames[i] = stepNameValues[i].value;
   } //update stepnames array with current stepname values
+
+  let satValues = document.getElementsByName("sat");
+  for (let i = 0; i < satValues.length; i++) {
+    json.saturation[i] = satValues[i].value;
+  } //update saturation array with current sat values
 }
 
 
@@ -55,8 +60,8 @@ function updateHueDataFromInputs() {
   //console.log(json.hueStarts);
 }
 
-function updateContrastSettings() {
 
+function updateContrastSettings() {
   let contrastSettings = document.getElementById("contrastSettings");
   while (contrastSettings.firstChild) {
     contrastSettings.removeChild(contrastSettings.lastChild);
@@ -79,7 +84,6 @@ function updateContrastSettings() {
 }
 
 function updateHueSettings() {
-
   let hueSettings = document.getElementById("hueSettings");
   while (hueSettings.firstChild) {
     hueSettings.removeChild(hueSettings.lastChild);
@@ -98,6 +102,9 @@ function updateHueSettings() {
 
     let idEnd = "famEnd" + fam;
     document.getElementById(idEnd).value = json.hueEnds[fam];
+
+    let idSat = "sat" + fam;
+    document.getElementById(idSat).value = json.saturation[fam];
     //console.log(id, hueStartValues[fam].value);
     //add back previous contrast values
 
