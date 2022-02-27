@@ -1,5 +1,7 @@
 //TODO
-//saturation per hue family - lets you make grays
+//newly added end hues should initially have same hue as start
+//switch to fully hsl-based swatches
+//add global toggle between hex and hsl modes
 //saturation adjustment per swatch
 //format json to conform to style dictionary spec, maybe with a setting
 //black and white (maybe as one-off colors)?
@@ -168,6 +170,7 @@ function addHueFamily() {
   json.hueFamilies++;
   json.hueStarts.push(0);
   json.hueEnds.push(0);
+  json.saturation.push(100);
   json.hueNames.push("?");
   json.hueEndEnabled.push(false);
   json.flips.push(false);

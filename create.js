@@ -75,6 +75,7 @@ function createHueSetting(fam) {
   hueSatInput.name = "sat";
   hueSatInput.addEventListener("change", updateUIFromInputs);
   hueSatInput.addEventListener("click", hueSatInput.select);
+  //hueSatInput.value = "0";
   hueSatInput.min = "0";
   hueSatInput.max = "100";
   hueSettingDelete.addEventListener("click", delHueStep);

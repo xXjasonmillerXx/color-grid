@@ -105,7 +105,7 @@ function updateHueSettings() {
 
     let idSat = "sat" + fam;
     document.getElementById(idSat).value = json.saturation[fam];
-    //console.log(id, hueStartValues[fam].value);
+    //console.log(idSat, document.getElementById(idSat).value);
     //add back previous contrast values
 
     let nameID = "nameF" + fam;
