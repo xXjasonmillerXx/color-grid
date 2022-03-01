@@ -1,8 +1,7 @@
 //TODO
-//newly added end hues should initially have same hue as start
 //switch to fully hsl-based swatches
 //add global toggle between hex and hsl modes
-//saturation adjustment per swatch
+//control over swatch contents
 //format json to conform to style dictionary spec, maybe with a setting
 //black and white (maybe as one-off colors)?
 //reorder steps/fams (maybe with arrows to swap neighbors)
@@ -47,21 +46,25 @@
 
 //let contrasts = [];
 //let hueStarts = [];
-let hueEnds = [];
-let hueEndEnabled = [false, false, false];
-let flips = [false, false, false];
+//let hueEnds = [];
+//let hueEndEnabled = [false, false, false];
+//let flips = [false, false, false];
 
-let stepNames = [];
-let hueNames = [];
+//let stepNames = [];
+//let hueNames = [];
 
 let textarea = document.getElementById("jsonTextarea");
 let exportTextarea = document.getElementById("exportTextarea");
+
+let gridGapX = true;
+let gridGapY = true;
 
 let json = { 
   contrastSteps: 3,
   stepNames: [ '1', '2', '3' ],
   contrasts: [ '3', '4.5', '7' ],
   saturation: [ '100', '100', '80' ],
+  satAdjust: [ '0', '0', '0', '0', '0', '0', '0', '0', '0' ],
   hueFamilies: 3,
   hueNames: [ 'red', 'green', 'blue' ],
   hueStarts: [ '350', '160', '220' ],
@@ -147,6 +150,28 @@ function initializeUI() {
   //updateSwatches();
 }
 
+function toggleGridGapX() {
+  let root = document.querySelector(':root');
+  if (gridGapX == true) {
+    root.style.setProperty('--gridGapX', '0px');
+    gridGapX = false;
+  } else {
+    root.style.setProperty('--gridGapX', '8px');
+    gridGapX = true;
+  }
+}
+
+function toggleGridGapY() {
+  let root = document.querySelector(':root');
+  if (gridGapY == true) {
+    root.style.setProperty('--gridGapY', '0px');
+    gridGapY = false;
+  } else {
+    root.style.setProperty('--gridGapY', '8px');
+    gridGapY = true;
+  }
+}
+
 function addContrastStep() {
   json.contrastSteps++;
   json.contrasts.push(2);
@@ -174,7 +199,7 @@ function addHueFamily() {
   json.hueNames.push("?");
   json.hueEndEnabled.push(false);
   json.flips.push(false);
-  console.log(json.hueEndEnabled);
+  //console.log(json.hueEndEnabled);
   updateUI();
 }
 
@@ -290,7 +315,7 @@ function copyHsl() {
 
 function getContrast(hue, sat100, contrast) {
 
-  let sat = sat100 / 100;
+  let sat = Math.min(1, (sat100 / 100)); //convert sat values out of 100 to values out of 1, ensuring values over 1 are capped at 1
   for (let lightness100 = 0; lightness100 < 101; lightness100++) {
     //runs on every value of lightness from 0 to 100
     let testLightness = lightness100 / 100;

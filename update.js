@@ -13,6 +13,7 @@ function updateUIFromInputs() {
   //jsonWrite();
   updateContrastDataFromInputs();
   updateHueDataFromInputs();
+  updateAdjustmentDataFromInputs();
   //json.saturation = document.getElementById("saturation").value;
   //updateContrastSettings();
   //updateHueSettings();
@@ -20,6 +21,13 @@ function updateUIFromInputs() {
   jsonWrite();
   exportWrite();
   console.log(json);
+}
+
+function updateAdjustmentDataFromInputs() {
+  let satAdjustValues = document.getElementsByName("satAdjust");
+  for (let i = 0; i < satAdjustValues.length; i++) {
+    json.satAdjust[i] = satAdjustValues[i].value;
+  }
 }
 
 function updateContrastDataFromInputs() {
@@ -50,7 +58,13 @@ function updateHueDataFromInputs() {
   } //update start hues array with current hue values
 
   for (let i = 0; i < hueEndValues.length; i++) {
-    json.hueEnds[i] = hueEndValues[i].value;
+    if (json.hueEndEnabled[i] == false) {
+      json.hueEnds[i] = hueStartValues[i].value;
+      //console.log("false", hueStartValues);
+    } else {
+      json.hueEnds[i] = hueEndValues[i].value;
+      //console.log("true", hueStartValues);
+    }
   } //update end hues array with current hue values
 
   let hueNameValues = document.getElementsByClassName("hueName");
@@ -126,6 +140,8 @@ function updateSwatches() {
   for (let fam = 0; fam < json.hueFamilies; fam++) {
     for (let step = 0; step < json.contrastSteps; step++) {
       createSwatch(fam, step);
+      let satAdjID = "satAdjF" + fam + "S" + step;
+      document.getElementById(satAdjID).value = json.satAdjust[(fam*json.contrastSteps) +step];
     }
   }
 }

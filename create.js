@@ -142,8 +142,9 @@ function createEndHueSetting(fam) {
     hueEndSettingLabel.style.display = "none";
     hueEndSettingInput.style.display = "none";
     hueEndSettingFlip.style.display = "none";
+    json.hueEnds[fam] = json.hueStarts[fam];
     //console.log(hueEnds[fam], hueStarts[fam]);
-    //if hue end is true, append elements to DOM, else don't
+    //if hue end is false, change elements to not display, else don't
     //console.log(hueEndEnabled[fam]);
   }
 }
@@ -151,7 +152,7 @@ function createEndHueSetting(fam) {
 function createSwatch(fam, step) {
   let hueValue;
   if (json.hueEndEnabled[fam] == true) {
-    if (flips[fam] == true) {
+    if (json.flips[fam] == true) {
       hueValue = calcHueFlipped(fam, step); //get hue from wraparound technique
     } else {
       hueValue = calcHue(fam, step); //get hue from normal technique
@@ -163,7 +164,8 @@ function createSwatch(fam, step) {
 
   let contrastID = "step" + step; //get id of corresponding contrast input
   let contrastValue = document.getElementById(contrastID).value; //get value of contrast input
-  let satValue = json.saturation[fam];
+  let satValue = Number(json.saturation[fam]) + Number(json.satAdjust[(fam*json.contrastSteps) +step]);
+  //console.log(satValue, json.saturation[fam], json.satAdjust[(fam*json.contrastSteps) +step]);
   let color = getContrast(hueValue, satValue, contrastValue); //get color
   let actualContrast = Math.round(chroma.contrast(color, "white") * 100)/100; //get actual contrast of color
   let hex = chroma(color).hex();
@@ -187,6 +189,9 @@ function createSwatch(fam, step) {
   let ack = document.createElement("div");
   let ackName = document.createElement("p");
   let ackNameText = document.createTextNode("Copied!");
+  let satAdjustLabel = document.createElement("label");
+  let satAdjustLabelText = document.createTextNode("Sat Adjustment: ")
+  let satAdjust = document.createElement("input");
   //create swatch contents
 
   swatch.id = "swatchF" + fam + "S" + step;
@@ -204,11 +209,22 @@ function createSwatch(fam, step) {
     swatch.style.color = "black";
     ack.style.backgroundColor = "black";
     ack.style.color = "white";
+    satAdjust.style.borderColor = "black";
   } else { 
     swatch.style.color = "white";
     ack.style.backgroundColor = "white";
     ack.style.color = "black";
+    satAdjust.style.borderColor = "white";
     }
+  satAdjustLabel.className = "swatchText";
+  satAdjust.id = "satAdjF" + fam + "S" + step;
+  satAdjust.className = "satAdjust";
+  satAdjust.addEventListener("change", updateUIFromInputs);
+  satAdjust.addEventListener("click", satAdjust.select);
+  satAdjust.type = "number";
+  satAdjust.name = "satAdjust";
+  satAdjust.min = -100;
+  satAdjust.mac = 100;
   //add attributes to contents
 
   document.getElementById("grid").appendChild(swatch);
@@ -223,5 +239,8 @@ function createSwatch(fam, step) {
   swatch.appendChild(ack);
   ack.appendChild(ackName);
   ackName.appendChild(ackNameText);
+  swatch.appendChild(satAdjustLabel);
+  satAdjustLabel.appendChild(satAdjustLabelText);
+  swatch.appendChild(satAdjust);
   //put contents in DOM
 }

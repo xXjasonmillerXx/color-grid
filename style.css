@@ -1,3 +1,8 @@
+:root {
+  --gridGapX: 8px;
+  --gridGapY: 8px;
+}
+
 body {
   font-family: sans-serif;
   font-size: 14px;
@@ -14,7 +19,7 @@ body {
 .grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 4px;
+  gap: var(--gridGapX) var(--gridGapY);
   grid-auto-rows: minmax(80px, auto);
 }
 
@@ -25,14 +30,14 @@ body {
 .contrastSettings {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 4px;
+  gap: var(--gridGapX) var(--gridGapY);
   grid-auto-rows: minmax(80px, 240px) auto;
 }
 
 .hueSettings {
   display: grid;
   grid-template-rows: repeat(3, 1fr);
-  gap: 4px;
+  gap: var(--gridGapX) var(--gridGapY);
   grid-template-columns: 1fr;
 }
 
@@ -41,10 +46,6 @@ body {
 }
 
 .swatch {
-  //width: 200px;
-  //height: 120px;
-  //background-color: rgb(255, 255, 255);
-  border-radius: 2px;
   padding: 8px;
 }
 
@@ -82,4 +83,10 @@ p {
   float: right;
   //top: 8px;
   //right: 8px;
+}
+
+.satAdjust {
+  background-color: hsla(0, 0%, 100%, .4);
+  border-width: 1px;
+  border-radius: 2px;
 }
