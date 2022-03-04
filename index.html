@@ -6,11 +6,21 @@
 	<meta name="viewport" content="width=device-width">
 	<title>Color Grid</title>
 	<link href="style.css" rel="stylesheet" type="text/css" />
+  <link href="theme.css" rel="stylesheet" type="text/css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans&display=swap" rel="stylesheet">
 </head>
 
 <body onload="initializeUI()">
-  <button onclick="toggleGridGapX()">Toggle Vertical Gap</button>
-  <button onclick="toggleGridGapY()">Toggle Horizontal Gap</button>
+  <div class="toolbar">
+    <div class="buttonGroup">
+      <p>Toggle Gaps:</p>
+      <button onclick="toggleGridGapX()">X</button>
+      <button onclick="toggleGridGapY()">Y</button>
+    </div>
+    <button onclick="toggleExportType()">Toggle Export Type</button>
+  </div>
 
   <div class="metagrid">
     <div class="cornerCell"></div>

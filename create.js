@@ -43,7 +43,7 @@ function createContrastSetting(step) {
 function createHueSetting(fam) {
   let hueSetting = document.createElement("div");
   let hueNameLabel = document.createElement("label");
-  let hueNameLabelText = document.createTextNode("Hue name: ");
+  let hueNameLabelText = document.createTextNode("Name: ");
   let hueNameInput = document.createElement("input");
   let hueSettingLabel = document.createElement("label");
   let hueSettingLabelText = document.createTextNode("Hue: ");
@@ -88,10 +88,10 @@ function createHueSetting(fam) {
   hueSetting.appendChild(hueSettingLabel);
   hueSettingLabel.appendChild(hueSettingLabelText);
   hueSetting.appendChild(hueSettingInput);
-  hueSetting.appendChild(hueSettingDelete);
   hueSetting.appendChild(hueSatLabel);
   hueSetting.appendChild(hueSatInput);
   hueSatLabel.appendChild(hueSatLabelText);
+  hueSetting.appendChild(hueSettingDelete);
   hueSettingDelete.appendChild(hueSettingDeleteText);
   //put contents in DOM
 }

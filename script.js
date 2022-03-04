@@ -1,6 +1,9 @@
 //TODO
 //switch to fully hsl-based swatches
 //add global toggle between hex and hsl modes
+//switch between different styles of json output
+//tooltips on everything
+//method of storing state in a more shareable way, prob with url
 //control over swatch contents
 //format json to conform to style dictionary spec, maybe with a setting
 //black and white (maybe as one-off colors)?
@@ -8,6 +11,7 @@
 //dark/neutral theme
 //choose swatches to exclude from display or export
 //if all swatches in a column are white or black, display one supertall swatch instead?
+//some way for people to provide feedback on the tool
 
 //more than one scale of steps?
 //come up with better saturation solution. easing?
@@ -59,6 +63,8 @@ let exportTextarea = document.getElementById("exportTextarea");
 let gridGapX = true;
 let gridGapY = true;
 
+let exportType = "W3C";
+
 let json = { 
   contrastSteps: 3,
   stepNames: [ '1', '2', '3' ],
@@ -80,22 +86,39 @@ let exportColors = {}
 
 function exportWrite() {
   exportColors = {};
-  //console.log(json.hueStarts, "exportwrite");
-  for(let h = 0; h < json.hueFamilies; h++) { //for each hue family
-    let hueName = json.hueNames[h];
-    //console.log(hueName, "huename");
-    let step = {}
-    for(let c = 0; c < json.contrastSteps; c++) { //for each contrast step in the family
-      let stepName = json.stepNames[c];
-      //console.log(stepName, "stepname");
-      step[hueName + stepName] = hsls[(h*json.hueFamilies)+c];
-      //console.log(step[hueName + stepName]);
-    }
+  
+  if (exportType == "W3C") {
+    //console.log(json.hueStarts, "exportwrite");
+    for(let h = 0; h < json.hueFamilies; h++) { //for each hue family
+      let hueName = json.hueNames[h];
+      //console.log(hueName, "huename");
+      let step = {}
+      for(let c = 0; c < json.contrastSteps; c++) { //for each contrast step in the family
+        let stepName = json.stepNames[c];
+        //console.log(stepName, "stepname");
+        let content = {}
+        step[hueName + stepName] = content;
+        content["value"] = hexes[(h*json.contrastSteps)+c];
+        content["type"] = "color";
+        console.log(step[hueName + stepName], (h*json.contrastSteps)+c);
+      }
     exportColors[hueName] = step;
+    }
+  } else if (exportType == "basic") {
+    for(let h = 0; h < json.hueFamilies; h++) { //for each hue family
+      let hueName = json.hueNames[h];
+      //console.log(hueName, "huename");
+      let step = {}
+      for(let c = 0; c < json.contrastSteps; c++) { //for each contrast step in the family
+        let stepName = json.stepNames[c];
+        //console.log(stepName, "stepname");
+        step[hueName + stepName] = hexes[(h*json.contrastSteps)+c];
+        console.log(step[hueName + stepName], (h*json.contrastSteps)+c);
+      }
+    exportColors[hueName] = step;
+    }
   }
-  //console.log(exportColors);
   let exportString = JSON.stringify(exportColors, null, "\t");
-  //console.log(exportString, "exportString");
   exportTextarea.value = exportString;
 }
 
@@ -150,26 +173,36 @@ function initializeUI() {
   //updateSwatches();
 }
 
-function toggleGridGapX() {
+function toggleGridGapY() {
   let root = document.querySelector(':root');
   if (gridGapX == true) {
-    root.style.setProperty('--gridGapX', '0px');
+    root.style.setProperty('--gridGapY', '0px');
     gridGapX = false;
   } else {
-    root.style.setProperty('--gridGapX', '8px');
+    root.style.setProperty('--gridGapY', '8px');
     gridGapX = true;
   }
 }
 
-function toggleGridGapY() {
+function toggleGridGapX() {
   let root = document.querySelector(':root');
   if (gridGapY == true) {
-    root.style.setProperty('--gridGapY', '0px');
+    root.style.setProperty('--gridGapX', '0px');
     gridGapY = false;
   } else {
-    root.style.setProperty('--gridGapY', '8px');
+    root.style.setProperty('--gridGapX', '8px');
     gridGapY = true;
   }
+}
+
+function toggleExportType() {
+  if (exportType == "W3C") {
+    exportType = "basic";
+  } else {
+    exportType = "W3C";
+  }
+  exportWrite();
+  console.log(exportType);
 }
 
 function addContrastStep() {
